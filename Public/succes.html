@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commande confirmée — Salade Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #F5F5F0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { background: white; border-radius: 20px; padding: 48px 36px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 12px 48px rgba(0,0,0,0.1); }
+    .icon { font-size: 72px; margin-bottom: 24px; animation: bounce 1s ease; }
+    @keyframes bounce { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+    h1 { font-size: 26px; color: #2D5016; margin-bottom: 12px; }
+    p { color: #666; font-size: 15px; line-height: 1.7; margin-bottom: 8px; }
+    .numero { background: #E8F5D6; border-radius: 10px; padding: 16px; margin: 24px 0; }
+    .numero-label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+    .numero-val { font-size: 24px; font-weight: 700; color: #2D5016; letter-spacing: 2px; margin-top: 4px; }
+    .btn { display: inline-block; background: #4A7C2F; color: white; padding: 14px 32px; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none; margin-top: 24px; }
+    .btn:hover { background: #2D5016; }
+    .details { text-align: left; margin: 20px 0; }
+    .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    .detail-row:last-child { border-bottom: none; font-weight: 700; color: #2D5016; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🎉</div>
+  <h1>Commande confirmée !</h1>
+  <p>Votre paiement a été reçu avec succès.<br>Nous préparons votre salade avec soin.</p>
+
+  <div class="numero">
+    <div class="numero-label">Numéro de commande</div>
+    <div class="numero-val" id="numeroCmd">—</div>
+  </div>
+
+  <div class="details" id="detailsCmd"></div>
+
+  <p style="color:#888; font-size:13px;">⏱️ Livraison estimée : <strong>30–45 minutes</strong></p>
+
+  <a href="/" class="btn">← Retour au menu</a>
+</div>
+
+<script>
+  const params  = new URLSearchParams(window.location.search);
+  const orderId = params.get('orderId') || localStorage.getItem('salade_last_order');
+
+  if (orderId) {
+    fetch(`/api/commandes/${orderId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) return;
+        const c = data.data;
+        document.getElementById('numeroCmd').textContent = c.numero;
+
+        const items = Array.isArray(c.items_json) ? c.items_json : [];
+        const lignes = items.map(i =>
+          `<div class="detail-row"><span>${i.nom} ×${i.quantite}</span><span>${(i.prix * i.quantite).toLocaleString('fr-FR')} FCFA</span></div>`
+        ).join('');
+
+        document.getElementById('detailsCmd').innerHTML = `
+          ${lignes}
+          <div class="detail-row"><span>Total</span><span>${c.montant_total.toLocaleString('fr-FR')} FCFA</span></div>
+        `;
+
+        localStorage.removeItem('salade_last_order');
+      });
+  }
+</script>
+</body>
+</html>
