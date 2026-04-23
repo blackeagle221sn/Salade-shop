@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement échoué — Salade Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #F5F5F0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { background: white; border-radius: 20px; padding: 48px 36px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 12px 48px rgba(0,0,0,0.1); }
+    .icon { font-size: 72px; margin-bottom: 24px; }
+    h1 { font-size: 26px; color: #CC2222; margin-bottom: 12px; }
+    p { color: #666; font-size: 15px; line-height: 1.7; margin-bottom: 16px; }
+    .reasons { background: #FFF5F5; border-radius: 10px; padding: 16px; margin: 20px 0; text-align: left; }
+    .reasons p { font-size: 13px; color: #888; margin-bottom: 8px; font-weight: 600; }
+    .reasons ul { padding-left: 20px; font-size: 13px; color: #666; }
+    .reasons ul li { margin-bottom: 4px; }
+    .btns { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .btn { display: inline-block; padding: 14px 32px; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none; text-align: center; }
+    .btn-primary { background: #4A7C2F; color: white; }
+    .btn-primary:hover { background: #2D5016; }
+    .btn-secondary { background: #F5F5F0; color: #666; }
+    .btn-secondary:hover { background: #E5E5E0; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">😕</div>
+  <h1>Paiement non abouti</h1>
+  <p>Votre paiement n'a pas pu être traité.<br>Votre panier a été conservé.</p>
+
+  <div class="reasons">
+    <p>Raisons possibles :</p>
+    <ul>
+      <li>Solde insuffisant sur votre compte</li>
+      <li>Transaction annulée</li>
+      <li>Délai de paiement dépassé</li>
+      <li>Problème de connexion</li>
+    </ul>
+  </div>
+
+  <div class="btns">
+    <a href="/" class="btn btn-primary">🔄 Réessayer</a>
+    <a href="tel:+221771234567" class="btn btn-secondary">📞 Nous contacter</a>
+  </div>
+</div>
+</body>
+</html>
