@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🥗 Salade Shop — Dakar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="brand">
+      <span class="brand-leaf">🥗</span>
+      <span class="brand-name">Salade<strong>Shop</strong></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#catalogue">Menu</a>
+      <a href="#apropos">À propos</a>
+      <a href="tel:+221771234567">📞 Commander</a>
+    </nav>
+    <button class="cart-toggle" onclick="toggleCart()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Panier
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <span class="hero-tag">🌿 Frais · Local · Sain</span>
+    <h1 class="hero-title">Des salades <em>qui font</em><br>du bien</h1>
+    <p class="hero-sub">Préparées chaque jour avec des ingrédients frais du marché de Dakar. Livraison en 30 min.</p>
+    <a href="#catalogue" class="btn btn-hero">Voir le menu</a>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-plate">
+      <div class="plate-circle c1"></div>
+      <div class="plate-circle c2"></div>
+      <span class="plate-emoji">🥗</span>
+    </div>
+    <div class="hero-pills">
+      <span class="pill">🕐 30 min</span>
+      <span class="pill">🏍️ Livraison gratuite</span>
+      <span class="pill">💳 Wave · Orange Money</span>
+    </div>
+  </div>
+</section>
+
+<section class="categories" id="catalogue">
+  <div class="container">
+    <h2 class="section-title">Notre <em>Menu</em></h2>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-cat="all">Tout voir</button>
+      <button class="filter-btn" data-cat="classique">🥬 Classiques</button>
+      <button class="filter-btn" data-cat="premium">⭐ Premium</button>
+      <button class="filter-btn" data-cat="vegan">🌱 Vegan</button>
+      <button class="filter-btn" data-cat="senegalaise">🇸🇳 Sénégalaise</button>
+    </div>
+  </div>
+</section>
+
+<section class="catalogue-section">
+  <div class="container">
+    <div class="produit-grid" id="produitGrid">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement du menu...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <h2>🛒 Mon Panier</h2>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty" id="cartEmpty">
+      <span class="empty-icon">🥗</span>
+      <p>Votre panier est vide</p>
+      <button class="btn btn-sm" onclick="closeCart()">Voir le menu</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cartTotal">0 FCFA</strong>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="ouvrirCheckout()">
+      Passer la commande →
+    </button>
+  </div>
+</aside>
+
+<div class="modal-overlay" id="checkoutOverlay">
+  <div class="modal" id="checkoutModal">
+    <div class="modal-header">
+      <h3>🛍️ Finaliser la commande</h3>
+      <button onclick="fermerCheckout()" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="checkout-step" id="step1">
+        <h4 class="step-title"><span class="step-num">1</span> Vos informations</h4>
+        <div class="form-group">
+          <label>Nom complet *</label>
+          <input type="text" id="clientNom" placeholder="Aminata Diallo">
+        </div>
+        <div class="form-group">
+          <label>Téléphone *</label>
+          <input type="tel" id="clientTel" placeholder="77 123 45 67">
+        </div>
+        <div class="form-group">
+          <label>Email (optionnel)</label>
+          <input type="email" id="clientEmail" placeholder="aminata@email.com">
+        </div>
+        <div class="form-group">
+          <label>Adresse de livraison *</label>
+          <textarea id="clientAdresse" placeholder="Ex : Rue 10, Dakar Plateau" rows="2"></textarea>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="allerStep2()">Continuer →</button>
+      </div>
+
+      <div class="checkout-step hidden" id="step2">
+        <h4 class="step-title"><span class="step-num">2</span> Moyen de paiement</h4>
+        <div class="recap-box" id="recapBox"></div>
+        <div class="payment-options">
+          <label class="payment-option wave">
+            <input type="radio" name="paiement" value="wave">
+            <div class="payment-card">
+              <div class="payment-logo wave-logo"><span class="wave-icon">W</span></div>
+              <div class="payment-info"><strong>Wave</strong><span>Paiement mobile rapide</span></div>
+              <div class="payment-check">✓</div>
+            </div>
+          </label>
+          <label class="payment-option orange">
+            <input type="radio" name="paiement" value="orange_money">
+            <div class="payment-card">
+              <div class="payment-logo orange-logo"><span class="om-icon">OM</span></div>
+              <div class="payment-info"><strong>Orange Money</strong><span>Paiement mobile Orange</span></div>
+              <div class="payment-check">✓</div>
+            </div>
+          </label>
+        </div>
+        <div class="sandbox-notice">
+          🧪 <strong>Mode test activé</strong> — Aucun argent réel débité.
+        </div>
+        <div class="step2-btns">
+          <button class="btn btn-outline" onclick="retourStep1()">← Retour</button>
+          <button class="btn btn-primary" onclick="passerCommande()">💳 Payer</button>
+        </div>
+      </div>
+
+      <div class="checkout-step hidden" id="step3">
+        <div class="loading-center">
+          <div class="spinner large"></div>
+          <p>Création de votre commande...</p>
+          <small>Redirection vers le paiement</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="apropos" id="apropos">
+  <div class="container apropos-grid">
+    <div class="apropos-text">
+      <span class="section-tag">Notre histoire</span>
+      <h2 class="section-title">Nées au cœur <em>de Dakar</em></h2>
+      <p>Depuis 2020, nous créons des salades composées saines, goûteuses et accessibles. Chaque matin, nous sélectionnons les meilleurs ingrédients au marché local.</p>
+      <div class="apropos-features">
+        <div class="feature"><span>🌿</span> Ingrédients frais chaque jour</div>
+        <div class="feature"><span>🏍️</span> Livraison rapide Dakar & banlieue</div>
+        <div class="feature"><span>💚</span> Recettes créées par une diététicienne</div>
+        <div class="feature"><span>📦</span> Emballages éco-responsables</div>
+      </div>
+    </div>
+    <div class="apropos-stats">
+      <div class="stat-card"><span class="stat-num">500+</span><span>commandes / mois</span></div>
+      <div class="stat-card"><span class="stat-num">6</span><span>salades au menu</span></div>
+      <div class="stat-card"><span class="stat-num">30min</span><span>de livraison</span></div>
+      <div class="stat-card"><span class="stat-num">4.9⭐</span><span>satisfaction</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="brand-name">🥗 Salade<strong>Shop</strong></span>
+      <p>Dakar, Sénégal 🇸🇳</p>
+    </div>
+    <div class="footer-links">
+      <a href="tel:+221771234567">📞 +221 77 123 45 67</a>
+      <a href="https://wa.me/221771234567">💬 WhatsApp</a>
+      <a href="mailto:contact@saladeshop.sn">✉️ Email</a>
+    </div>
+    <p class="footer-copy">© 2026 Salade Shop. Tous droits réservés.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="/js/app.js"></script>
+</body>
+</html>
