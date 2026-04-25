@@ -236,11 +236,27 @@ input, textarea { font-family: inherit; }
   letter-spacing: 0.1em;
   color: var(--green-mid);
   margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.suppl-titre::after {
+  content: '▼';
+  font-size: 10px;
+  transition: transform 0.3s;
+}
+.suppl-titre.open::after {
+  transform: rotate(180deg);
 }
 .suppl-liste {
-  display: flex;
+  display: none;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 8px;
+}
+.suppl-liste.open {
+  display: flex;
 }
 .suppl-item {
   display: flex;
