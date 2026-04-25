@@ -223,3 +223,56 @@ input, textarea { font-family: inherit; }
   .filter-bar { gap: 6px; }
   .filter-btn { padding: 7px 14px; font-size: 13px; }
 }
+/* ─── SUPPLÉMENTS ─── */
+.supplements-section {
+  margin-bottom: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.suppl-titre {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--green-mid);
+  margin-bottom: 10px;
+}
+.suppl-liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.suppl-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.suppl-item:hover {
+  border-color: var(--green-mid);
+  background: var(--green-pale);
+}
+.suppl-item input[type="checkbox"] {
+  display: none;
+}
+.suppl-item:has(input:checked) {
+  background: var(--green-pale);
+  border-color: var(--green-mid);
+  color: var(--green-deep);
+  font-weight: 600;
+}
+.suppl-prix {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+.suppl-item:has(input:checked) .suppl-prix {
+  color: var(--green-mid);
+}
+
