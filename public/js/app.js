@@ -1,12 +1,25 @@
 let panier = JSON.parse(localStorage.getItem('salade_panier') || '[]');
 let tousLesProduits = [];
+let tousLesSupplements = [];
 let filtreActif = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
   chargerProduits();
+  chargerSupplements();
   renderPanier();
   initFiltres();
 });
+
+async function chargerSupplements() {
+  try {
+    const res  = await fetch('/api/supplements');
+    const data = await res.json();
+    if (data.success) tousLesSupplements = data.data;
+  } catch (err) {
+    console.error('[SUPPLEMENTS]', err);
+  }
+}
+
 
 async function chargerProduits() {
   try {
@@ -32,7 +45,18 @@ function afficherProduits(produits) {
   }
   const badgeClass = { premium: 'badge-premium', vegan: 'badge-vegan', senegalaise: 'badge-senegalaise' };
   const badgeLabel = { classique: 'Classique', premium: '⭐ Premium', vegan: '🌱 Vegan', senegalaise: '🇸🇳 Sénégalais' };
-  grid.innerHTML = produits.map(p => {
+grid.innerHTML = produits.map(p => {
+  const supplementsHTML = tousLesSupplements.map(s => `
+    <label class="suppl-item">
+      <input type="checkbox" class="suppl-check"
+             data-produit="${p.id}"
+             data-id="${s.id}"
+             data-nom="${s.nom}"
+             data-prix="${s.prix}"
+             data-emoji="${s.emoji}">
+      <span>${s.emoji} ${s.nom}</span>
+      <span class="suppl-prix">+${s.prix.toLocaleString('fr-FR')} FCFA</span>
+    </label>`).join('');
     const inPanier = panier.find(i => i.id === p.id);
     return `
       <article class="produit-card" data-cat="${p.categorie}">
@@ -45,6 +69,10 @@ function afficherProduits(produits) {
           <span class="produit-cat">${p.categorie}</span>
           <h3 class="produit-nom">${p.nom}</h3>
           <p class="produit-desc">${p.description}</p>
+          <div class="supplements-section">
+            <div class="suppl-titre">➕ Suppléments (+1 000 FCFA)</div>
+            <div class="suppl-liste">${supplementsHTML}</div>
+          </div>
           <div class="produit-footer">
             <div class="produit-prix">${p.prix.toLocaleString('fr-FR')} <small>FCFA</small></div>
             <button class="btn-ajouter ${inPanier ? 'added' : ''}" id="btn-${p.id}" onclick="ajouterAuPanier(${p.id})">
@@ -75,10 +103,22 @@ function nombreArticles() { return panier.reduce((sum, i) => sum + i.quantite, 0
 function ajouterAuPanier(produitId) {
   const produit = tousLesProduits.find(p => p.id === produitId);
   if (!produit) return;
-  const existing = panier.find(i => i.id === produitId);
+
+  // Récupérer les suppléments cochés pour ce produit
+  const supplementsCocheches = [...document.querySelectorAll(`.suppl-check[data-produit="${produitId}"]:checked`)]
+    .map(el => ({
+      id: parseInt(el.dataset.id),
+      nom: el.dataset.nom,
+      prix: parseInt(el.dataset.prix),
+      emoji: el.dataset.emoji
+    }));
+
+  const prixTotal = produit.prix + supplementsCocheches.reduce((s, sup) => s + sup.prix, 0);
+
+  const existing = panier.find(i => i.id === produitId && JSON.stringify(i.supplements) === JSON.stringify(supplementsCocheches));
   if (existing) { existing.quantite++; }
-  else { panier.push({ id: produit.id, nom: produit.nom, prix: produit.prix, image_url: produit.image_url, quantite: 1 }); }
-  sauvegarderPanier();
+  else { panier.push({ id: produit.id, nom: produit.nom, prix: prixTotal, prixBase: produit.prix, supplements: supplementsCocheches, image_url: produit.image_url, quantite: 1 }); }
+ sauvegarderPanier();
   renderPanier();
   afficherProduits(filtreActif === 'all' ? tousLesProduits : tousLesProduits.filter(p => p.categorie === filtreActif));
   showToast(`🥗 ${produit.nom} ajouté !`);
