@@ -272,3 +272,24 @@ function showToast(message, type = 'success') {
 document.getElementById('checkoutOverlay')?.addEventListener('click', (e) => {
   if (e.target === document.getElementById('checkoutOverlay')) fermerCheckout();
 });
+// ─── ROLLUP SUPPLÉMENTS ───────────────────────────────────────────────────────
+document.addEventListener('click', (e) => {
+  const titre = e.target.closest('.suppl-titre');
+  if (!titre) return;
+  
+  const liste = titre.nextElementSibling;
+  const isOpen = liste.classList.contains('open');
+  
+  // Fermer tous les autres
+  document.querySelectorAll('.suppl-liste.open').forEach(l => {
+    l.classList.remove('open');
+    l.previousElementSibling.classList.remove('open');
+  });
+  
+  // Ouvrir/fermer celui cliqué
+  if (!isOpen) {
+    liste.classList.add('open');
+    titre.classList.add('open');
+  }
+});
+
