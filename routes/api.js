@@ -15,7 +15,16 @@ router.get('/produits', (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 });
-
+router.get('/supplements', (req, res) => {
+  try {
+    const supplements = getDB(req).prepare(
+      'SELECT * FROM supplements WHERE disponible = 1'
+    ).all();
+    res.json({ success: true, data: supplements });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 router.post('/commandes', async (req, res) => {
   try {
     const db = getDB(req);
